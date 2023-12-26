@@ -6,6 +6,40 @@ import smtplib
 from email.mime.text import MIMEText
 import time
 
+def isValidRange(rangeFrom, rangeTo):
+    try:
+        intRangeFrom = int(rangeFrom)
+        intRangeTo = int(rangeTo)
+        
+    except:
+        print("please dont play around")
+        return False
+    
+    if intRangeFrom > intRangeTo:
+        print("invalid range")
+        return False
+    
+    return True
+
+def takeRange():
+    global price_item
+    price_item=input('Enter the price range using hyphen in which you would like to be notified about deals: ')
+    while price_item == "" or "-" not in price_item:
+        if(price_item == ""):
+            print("budget range is required!")
+        elif("-" not in price_item):
+            print("I think you forgot the hyphen.")
+        
+        price_item=input('Enter the price range using hyphen in which you would like to be notified about deals: ')
+    price_item = price_item.split("-")
+    price_item[0].strip(" ")
+    price_item[1].strip(" ")
+
+    if not isValidRange(price_item[0], price_item[1]):
+        print("Sorry Invalid Range")
+        takeRange()
+        
+
 def bypass_captcha(url):
     response = requests.get(url, headers=HEADERS)
     if "captcha" in response.url:
@@ -43,21 +77,6 @@ def string_to_int(str):
         len1-=1     
     return sum
 
-# def jacc_similarity(st1, st2):
-# #calculates the similarity perc by divind the nukmber of same words to the total number of words
-#     st1=st1.replace(',',' ').replace('-',' ').replace('(',' ').replace(')',' ').replace(':',' ')
-#     st2=st2.replace(',',' ').replace('-',' ').replace('(',' ').replace(')',' ').replace(':',' ')
-#     str1 = set(st1.lower().split())
-#     str2 = set(st2.lower().split())
-    
-#     inter = len(str1.intersection(str2))
-#     union = len(str1.union(str2))
-    
-#     similarity = (inter/union) if union > 0 else 0
-#     similarity_perc = similarity * 100
-#     return similarity_perc
-
-
 #calculates the similarity perc by dividing the number of words found in the product description that match the user input 
 #to the total number of words in the product description
 def str_similarity(product, user_input):
@@ -75,10 +94,9 @@ def str_similarity(product, user_input):
 
 name_item = input('Type in the name and the specs of the product you want to look up: ')
 url="https://amazon.ca/s?k="+name_item
-price_item=input('Enter the price range using hyphen in which you would like to be notified about deals: ')
-price_item = price_item.split("-")
-price_item[0].strip(" ")
-price_item[1].strip(" ")
+
+takeRange()
+    
 
 user_email=input('Enter your email to notify you when the price of a similar product drops: ')
 sender_email='nick27dhillon08@gmail.com'
